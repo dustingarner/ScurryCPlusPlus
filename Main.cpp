@@ -30,8 +30,6 @@ int main(){
         accumulator += delta.count();
         currentTime = newTime;
 
-        
-
         bool prevClicked = currentInput->getMouseClicked();
         delete currentInput;
         currentInput = new Input(prevClicked);
@@ -43,42 +41,10 @@ int main(){
         prevState = currentState;
         currentState = new State(currentInput);
 
-
-
-
-        /*
-        sf::Vector2f moveAxes(0,0);
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
-            moveAxes.x -= 1;
-        }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
-            moveAxes.x += 1;
-        }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
-            moveAxes.y -= 1;
-        }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
-            moveAxes.y += 1;
-        }
-
-        if(abs(moveAxes.x) + abs(moveAxes.y) > 1){
-            moveAxes.x *= sqrt(1.0/2.0);
-            moveAxes.y *= sqrt(1.0/2.0);
-        }
-
-        shape.setPosition(shape.getPosition() + (moveAxes * SPEED));
-        */
-
-
         window.clear();
         window.draw(shape); //Rendering stuff here
         window.display();
-
-
-
-        //sf::Vector2u a(800, 600 + (counter % 200));
-        //window.setSize(a);
-
+        
         sf::Event event;
         while(window.pollEvent(event)){
             if(event.type == sf::Event::Closed){
