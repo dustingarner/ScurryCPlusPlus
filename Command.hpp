@@ -4,7 +4,6 @@
 
 class Command{
     public:
-    virtual ~Command();
     virtual void execute(const GameObject& gameObject) = 0;
 };
 

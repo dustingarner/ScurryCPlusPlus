@@ -3,17 +3,27 @@
 
 #include "SFML/System/Vector2.hpp"
 #include "SFML/Graphics/Rect.hpp"
+#include "SFML/Graphics/Color.hpp"
+#include "SFML/Graphics/RenderWindow.hpp"
+#include "SFML/Graphics/RectangleShape.hpp"
 
 class CollisionBox{
     public:
-    CollisionBox(sf::Vector2f _size, sf::Vector2f _offset): SIZE(_size), OFFSET(_offset) {}
-    void setPosition(sf::Vector2f position) {box = sf::FloatRect(position + OFFSET, SIZE);}
+    CollisionBox(): size(sf::Vector2f(0.0f,0.0f)), offset(sf::Vector2f(0.0f,0.0f)) {}
+    CollisionBox(sf::Vector2f _size, sf::Vector2f _offset): size(_size), offset(_offset) {}
+    void setSize(sf::Vector2f _size) {size = _size;}
+    void setOffset(sf::Vector2f _offset) {offset = _offset;}
+    void setPosition(sf::Vector2f position) {box = sf::FloatRect(position + offset, size);}
     sf::FloatRect getBox() {return box;}
+    void setVisible(bool toggle) {visible = toggle;}
+    bool pointColliding(sf::Vector2f point) {return box.contains(point);}
+    void draw(sf::RenderWindow* window);
     
     private:
+    bool visible = true;
     sf::FloatRect box;
-    const sf::Vector2f SIZE;
-    const sf::Vector2f OFFSET;
+    sf::Vector2f size;
+    sf::Vector2f offset;
 };
 
 #endif

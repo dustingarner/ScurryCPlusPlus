@@ -2,27 +2,26 @@
 #include <chrono>
 #include "SFML/Graphics.hpp"
 #include "Input.hpp"
+#include "World.hpp"
 
-class State{
-    public:
-    State(){}
-    State(Input input){}
-};
+
+void changeScene(World* world, WorldInitializer* initializer){
+    world->changeScene(initializer);
+    world->initialize();
+}
 
 int main(){
     sf::RenderWindow window(sf::VideoMode(800, 600), "My Window");
-    sf::RectangleShape shape(sf::Vector2f(200, 100));
-    shape.setFillColor(sf::Color::Red);
+
+    World* world = new World(new TestInitializer());
+    world->initialize();
 
     Input* currentInput = new Input();
-    currentInput->init();
+    currentInput->initialize(&window);
 
     double accumulator = 0.0;
     const double maxDelta = 1.0 / 60.0;
     auto currentTime = std::chrono::system_clock::now();
-
-    State* prevState;
-    State* currentState = new State();
 
     while(window.isOpen()){
         auto newTime = std::chrono::system_clock::now();
@@ -33,32 +32,22 @@ int main(){
         bool prevClicked = currentInput->getMouseClicked();
         delete currentInput;
         currentInput = new Input(prevClicked);
-        currentInput->init();
 
-        if(prevState != nullptr){
-            delete prevState;
-        }
-        prevState = currentState;
-        currentState = new State(currentInput);
+        currentInput->initialize(&window);
 
-        window.clear();
-        window.draw(shape); //Rendering stuff here
-        window.display();
+        world->update(currentInput, delta.count());
+        world->draw(&window); //Maybe change accumulation and whatnot, pass in vector interpolation
         
         sf::Event event;
         while(window.pollEvent(event)){
             if(event.type == sf::Event::Closed){
                 delete currentInput;
-                delete prevState;
-                delete currentState;
+                delete world;
                 window.close();
             }
         }
-
     }
 
     return 0;
 }
 
-
-//g++ sfml.cpp -I/opt/homebrew/Cellar/sfml/2.6.1/include -o prog -L/opt/homebrew/Cellar/sfml/2.6.1/lib -lsfml-graphics -lsfml-window -lsfml-system

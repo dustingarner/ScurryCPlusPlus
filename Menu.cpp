@@ -1,8 +1,10 @@
 #include "Menu.hpp"
 
-Button::Button(){
+/*
+Button::Button(sf::Vector2f _position){
     currentSprite = &mouseOutsideTexture;
 }
+*/
 
 void Button::update(World& world, Input& input){
     sf::Vector2<double> mousePosition((double)input.getMousePosition().x, (double)input.getMousePosition().y);

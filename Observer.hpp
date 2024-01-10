@@ -14,7 +14,7 @@ class Subject{
     public:
     Subject();
     ~Subject(){}
-    void emit();
+    void emit() {}
 };
 
 #endif

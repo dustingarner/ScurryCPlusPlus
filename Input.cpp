@@ -1,17 +1,16 @@
-#include "SFML/System/Vector2.hpp"
-#include "SFML/Window/Keyboard.hpp"
-#include "SFML/Window/Mouse.hpp"
+#include <iostream>
 #include "Input.hpp"
 
-void Input::init(){
+void Input::initialize(sf::RenderWindow* window){
     directions[0] = sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A);
     directions[1] = sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D);
     directions[2] = sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W);
     directions[3] = sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S);
-
+    
     mouseClicked = sf::Mouse::isButtonPressed(sf::Mouse::Left);
     mouseJustClicked = !_prevClicked && mouseClicked;
 
-    mousePos = sf::Mouse::getPosition();
+    sf::Vector2i tempMousePosition = sf::Mouse::getPosition(*window);
+    mousePos = sf::Vector2f((double)tempMousePosition.x, (double)tempMousePosition.y);
 }
 

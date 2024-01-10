@@ -13,17 +13,16 @@ using std::unordered_map, std::string, std::vector;
 
 class Sprite{
     public:
-    Sprite(sf::Vector2f _offset) : offset(_offset) {}
-    void addAnimation(string newAnimation, vector<sf::Texture> textures);
-    void setCurrentAnimation(string animation, int startFrame = 0);
+    Sprite() : offset(sf::Vector2f(0.0f,0.0f)), scale(1.0) {}
+    Sprite(sf::Vector2f _offset, double _scale) : offset(_offset), scale(_scale) {}
+    void setTexture(const string &filePath);
     sf::Sprite getSprite();
-    void draw(sf::RenderWindow* window, sf::Vector2f position);
+    void draw(sf::RenderWindow* window, const sf::Vector2f& position);
 
     private:
-    string currentAnimation = "";
-    int frame = 0;
+    double scale;
+    sf::Texture texture;
     sf::Vector2f offset;
-    unordered_map<string, vector<sf::Texture>> animations;
 };
 
 

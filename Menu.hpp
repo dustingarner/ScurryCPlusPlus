@@ -9,7 +9,7 @@
 
 class Button : GameObject{
     public:
-    Button();
+    Button(sf::Vector2f _position) : GameObject(_position) {}
     virtual void update(World& world, Input& input);
     void setOutsideTexture(sf::Texture texture){mouseOutsideTexture.setTexture(texture);}
     void setInsideTexture(sf::Texture texture){mouseInsideTexture.setTexture(texture);}

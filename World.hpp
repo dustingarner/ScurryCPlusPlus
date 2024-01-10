@@ -7,6 +7,24 @@
 
 using std::vector;
 
+class World;
+
+class WorldInitializer{
+    public:
+    virtual ~WorldInitializer() {}
+    virtual void initialize(World* world) = 0;
+};
+
+class MainMenuInitializer : public WorldInitializer{
+    public:
+    virtual void initialize(World* world);
+};
+
+class TestInitializer : public WorldInitializer{
+    public:
+    virtual void initialize(World* world);
+};
+
 
 class World{
     public:
@@ -14,29 +32,14 @@ class World{
     ~World();
     void initialize() {worldInitializer->initialize(this);}
     void addObject(GameObject* gameObject) {objects.push_back(gameObject);}
-    void update(Input input, double delta);
+    void update(Input* input, double delta);
+    void draw(sf::RenderWindow* window);
     void changeScene(WorldInitializer* _worldInitializer);
     void clearObjects();
 
     private:
     vector<GameObject*> objects;
     WorldInitializer* worldInitializer;
-};
-
-class WorldInitializer{
-    public:
-    virtual ~WorldInitializer();
-    virtual void initialize(World* world) = 0;
-};
-
-class MainMenuInitializer : WorldInitializer{
-    public:
-    virtual void initialize(World* world);
-};
-
-class TestInitializer : WorldInitializer{
-    public:
-    virtual void initialize(World* world);
 };
 
 
