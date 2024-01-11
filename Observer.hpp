@@ -2,19 +2,26 @@
 #define OBSERVER_H
 
 #include <vector>
+#include "GameObject.hpp"
 
 using std::vector;
 
 class Observer{
     public:
-    Observer();
+    virtual ~Observer() {}
+    virtual void execute(GameObject& object) = 0;
 };
 
 class Subject{
     public:
     Subject();
     ~Subject(){}
-    void emit() {}
+    virtual void notify(GameObject& object);
+    void addObserver(Observer* observer) {observers.push_back(observer);}
+    void removeObserver(Observer* observer);
+
+    private:
+    vector<Observer*> observers;
 };
 
 #endif

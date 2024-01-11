@@ -8,6 +8,7 @@
 #include "SFML/Graphics/Sprite.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "Input.hpp"
+#include "Observer.hpp"
 //#include "World.hpp"
 #include "Sprite.hpp"
 #include "Collision.hpp"
@@ -35,51 +36,10 @@ class GameObject{
 };
 
 
-class MouseObject : public GameObject{
-    public:
-    MouseObject(sf::Vector2f _position) : GameObject(_position) {}
-    virtual void initialize();
-    sf::Vector2f getDirection(Input* input);
-    virtual void update(World* world, Input* input, double delta);
-    virtual void draw(sf::RenderWindow* window);
-    void setControllable(bool toggle) {controllable = toggle;}
-
-    private:
-    bool controllable = false;
-    const int SPEED = 300.0;
-    CollisionBox enemyCollision = CollisionBox(sf::Vector2f(50.0, 25.0), sf::Vector2f(0.0,0.0));
-    CollisionBox shelterCollision = CollisionBox(sf::Vector2f(75.0, 36.0), sf::Vector2f(-22.3, -9.85));
-    CollisionBox cursorCollision = CollisionBox(sf::Vector2f(131.25, 75.0), sf::Vector2f(-70.0, -28.75));
-};
-
-class EnemyObject : public GameObject{
-    public:
-    EnemyObject() : GameObject() {}
-    virtual void initialize();
-    virtual void update(World* world, Input* input, double delta);
-    virtual void draw(sf::RenderWindow* window);
-
-    private:
-    int speed;
-    CollisionBox collision;
-    sf::Vector2f direction;
-};
-
-class EnemySpawnerObject : public GameObject{
-    public:
-    EnemySpawnerObject() : GameObject() {}
-    virtual void initialize() {randomizeMaxWaitTime();}
-    virtual void update(World* world, Input* input, double delta);
-    virtual void draw(sf::RenderWindow* window) {}
-    void randomizeMaxWaitTime() {maxWaitTime = 200.0 + (double)(rand() % 100);}
-
-    private:
-    const double SPAWN_SPEED = 200.0;
-    double totalWaitTime = 0.0;
-    double maxWaitTime;
-};
 
 
-MouseObject* makeMouse(sf::Vector2f position, bool controllable = false);
+
+
+
 
 #endif

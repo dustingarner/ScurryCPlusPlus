@@ -1,5 +1,24 @@
 #include "World.hpp"
 
+GameInitializer::~GameInitializer(){
+    delete spawnObserver;
+    //delete other things
+}
+
+void GameInitializer::initialize(World* world){
+    spawnObserver = new EnemySpawnObserver(world);
+    EnemySpawnerObject* spawner = new EnemySpawnerObject;
+    spawner->connectObserver(spawnObserver);
+    world->addObject(spawner);
+}
+
+void EnemySpawnObserver::execute(GameObject& object){
+    EnemyObject* newEnemy = spawnEnemy();
+    //Connect EnemyObject to erasing itself in time
+    world->addObject(newEnemy);
+}
+
+
 World::~World(){
     clearObjects();
 }
