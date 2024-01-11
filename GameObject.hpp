@@ -18,6 +18,7 @@ class World;
 
 class GameObject{
     public:
+    GameObject() {}
     GameObject(sf::Vector2f _position) : position(_position) {}
     GameObject(sf::Vector2f _position, Sprite _sprite) : position(_position), sprite(_sprite) {}
     virtual ~GameObject() {}
@@ -53,7 +54,7 @@ class MouseObject : public GameObject{
 
 class EnemyObject : public GameObject{
     public:
-    EnemyObject(sf::Vector2f _position) : GameObject(_position) {}
+    EnemyObject() : GameObject() {}
     virtual void initialize();
     virtual void update(World* world, Input* input, double delta);
     virtual void draw(sf::RenderWindow* window);
@@ -62,6 +63,20 @@ class EnemyObject : public GameObject{
     int speed;
     CollisionBox collision;
     sf::Vector2f direction;
+};
+
+class EnemySpawnerObject : public GameObject{
+    public:
+    EnemySpawnerObject() : GameObject() {}
+    virtual void initialize() {randomizeMaxWaitTime();}
+    virtual void update(World* world, Input* input, double delta);
+    virtual void draw(sf::RenderWindow* window) {}
+    void randomizeMaxWaitTime() {maxWaitTime = 200.0 + (double)(rand() % 100);}
+
+    private:
+    const double SPAWN_SPEED = 200.0;
+    double totalWaitTime = 0.0;
+    double maxWaitTime;
 };
 
 

@@ -90,9 +90,14 @@ void EnemyObject::initialize(){
     }
 }
 
-//Enemy update
-//Stuff about enemy spawner
-
+void EnemySpawnerObject::update(World* world, Input* input, double delta){
+    if(totalWaitTime >= maxWaitTime){
+        world->addObject(new EnemyObject);
+        totalWaitTime -= maxWaitTime;
+    }
+    randomizeMaxWaitTime();
+    totalWaitTime += SPAWN_SPEED * delta;
+}
 
 MouseObject* makeMouse(sf::Vector2f position, bool controllable){
     MouseObject* mouse = new MouseObject(position);
