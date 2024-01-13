@@ -26,10 +26,12 @@ class GameObject{
     virtual void initialize() = 0;
     virtual void update(World* world, Input* input, double delta) = 0;
     virtual void draw(sf::RenderWindow* window) {sprite.draw(window, position);}
+    bool getQueueDelete() {return queueDelete;}
 
     protected:
     sf::Vector2f position;
     Sprite sprite;
+    bool queueDelete = false;
 
     private:
     int zIndex;

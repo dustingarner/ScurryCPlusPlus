@@ -66,6 +66,7 @@ class World{
     private:
     vector<Observer*> observers;
     vector<GameObject*> objects;
+    vector<int> deleteQueue;
     WorldInitializer* worldInitializer;
 
 

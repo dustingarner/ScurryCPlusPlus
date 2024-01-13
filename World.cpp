@@ -42,7 +42,16 @@ void World::changeScene(WorldInitializer* _worldInitializer){
 void World::update(Input* input, double delta){
     for(int i = 0; i < objects.size(); i++){
         objects[i]->update(this, input, delta);
+        if(objects[i]->getQueueDelete()){
+            deleteQueue.push_back(i);
+        }
     }
+    for(int i = deleteQueue.size()-1; i >= 0; i--){
+        int tempDelete = deleteQueue[i];
+        delete objects[tempDelete];
+        objects.erase(objects.begin() + tempDelete);
+    }
+    deleteQueue.clear(); //Not sure if this is good because it only deletes objects after they set their bool is true (in their update)
 }
 
 void World::draw(sf::RenderWindow* window){
