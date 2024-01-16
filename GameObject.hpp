@@ -8,7 +8,7 @@
 #include "SFML/Graphics/Sprite.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "Input.hpp"
-#include "Observer.hpp"
+//#include "Observer.hpp"
 //#include "World.hpp"
 #include "Sprite.hpp"
 #include "Collision.hpp"

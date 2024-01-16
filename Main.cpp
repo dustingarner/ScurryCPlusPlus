@@ -13,7 +13,8 @@ void changeScene(World* world, WorldInitializer* initializer){
 int main(){
     sf::RenderWindow window(sf::VideoMode(800, 600), "My Window");
 
-    World* world = new World(new TestInitializer());
+    //World* world = new World(new TestInitializer());
+    World* world = new World(new MainMenuInitializer());
     world->initialize();
 
     Input* currentInput = new Input();
@@ -37,7 +38,8 @@ int main(){
 
         world->update(currentInput, delta.count());
         world->draw(&window); //Maybe change accumulation and whatnot, pass in vector interpolation
-        
+        world->attemptSceneChange();
+         
         sf::Event event;
         while(window.pollEvent(event)){
             if(event.type == sf::Event::Closed){

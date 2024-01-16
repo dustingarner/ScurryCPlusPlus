@@ -14,8 +14,8 @@ class Observer{
 
 class Subject{
     public:
-    Subject();
-    ~Subject(){}
+    Subject() {}
+    ~Subject() {}
     virtual void notify(GameObject& object);
     void addObserver(Observer* observer) {observers.push_back(observer);}
     void removeObserver(Observer* observer);

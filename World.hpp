@@ -5,6 +5,7 @@
 #include "Input.hpp"
 #include "Observer.hpp"
 #include "GameObject.hpp"
+#include "Menu.hpp"
 #include "Mouse.hpp"
 #include "Enemy.hpp"
 
@@ -12,6 +13,9 @@ using std::vector;
 
 class World;
 class EnemySpawnObserver;
+
+
+enum sceneType {NONE, MAIN, INFO, GAME, GAMEOVER};
 
 class WorldInitializer{
     public:
@@ -21,7 +25,22 @@ class WorldInitializer{
 
 class MainMenuInitializer : public WorldInitializer{
     public:
+    virtual ~MainMenuInitializer();
     virtual void initialize(World* world);
+
+    private:
+    Observer* startGameObserver;
+    Observer* openInfoObserver;
+    Observer* quitObserver;
+};
+
+class InfoInitializer : public WorldInitializer{
+    public:
+    virtual ~InfoInitializer();
+    virtual void initialize(World* world);
+
+    private:
+    Observer* toMainObserver;
 };
 
 class GameInitializer : public WorldInitializer{
@@ -61,15 +80,58 @@ class World{
     void update(Input* input, double delta);
     void draw(sf::RenderWindow* window);
     void changeScene(WorldInitializer* _worldInitializer);
+    void quitGame() {}
     void clearObjects();
+    void attemptSceneChange();
+    void setNewScene(sceneType _newScene) {newScene = _newScene;}
 
     private:
     vector<Observer*> observers;
     vector<GameObject*> objects;
     vector<int> deleteQueue;
     WorldInitializer* worldInitializer;
+    sceneType newScene = NONE;
+};
 
 
+class StartGameObserver : public Observer{
+    public:
+    StartGameObserver(World* _world) : world(_world) {}
+    virtual ~StartGameObserver() {}
+    virtual void execute(GameObject& object) {world->setNewScene(GAME);}
+
+    private:
+    World* world;
+};
+
+class OpenInfoObserver : public Observer{
+    public:
+    OpenInfoObserver(World* _world) : world(_world) {}
+    virtual ~OpenInfoObserver() {}
+    virtual void execute(GameObject& object) {world->setNewScene(INFO);}
+
+    private:
+    World* world;
+};
+
+class QuitObserver : public Observer{
+    public:
+    QuitObserver(World* _world) : world(_world) {}
+    virtual ~QuitObserver() {}
+    virtual void execute(GameObject& object) {world->quitGame();}
+
+    private:
+    World* world;
+};
+
+class ToMainObserver : public Observer{
+    public:
+    ToMainObserver(World* _world) : world(_world) {}
+    virtual ~ToMainObserver() {}
+    virtual void execute(GameObject& object) {world->setNewScene(MAIN);}
+
+    private:
+    World* world;
 };
 
 
