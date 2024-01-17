@@ -2,14 +2,31 @@
 
 GameInitializer::~GameInitializer(){
     delete spawnObserver;
+    delete mouseClickObserver;
     //delete other things
 }
 
 void GameInitializer::initialize(World* world){
+    world->resetScore();
     spawnObserver = new EnemySpawnObserver(world);
+    mouseClickObserver = new MouseClickObserver(this);
     EnemySpawnerObject* spawner = new EnemySpawnerObject;
     spawner->connectObserver(spawnObserver);
     world->addObject(spawner);
+    mice.push_back(makeMouse(sf::Vector2f(100.0f, 500.0f), true));
+    mice.push_back(makeMouse(sf::Vector2f(200.0f, 500.0f), false));
+    mice.push_back(makeMouse(sf::Vector2f(100.0f, 400.0f), false));
+    mice.push_back(makeMouse(sf::Vector2f(200.0f, 400.0f), false));
+    for(int i = 0; i < mice.size(); i++){
+        mice[i]->addClickObserver(mouseClickObserver);
+        world->addObject(mice[i]);
+    }
+}
+
+void GameInitializer::uncontrolMice(){
+    for(int i = 0; i < mice.size(); i++){
+        mice[i]->setControllable(false);
+    }
 }
 
 void EnemySpawnObserver::execute(GameObject& object){

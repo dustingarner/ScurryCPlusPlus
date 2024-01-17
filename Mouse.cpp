@@ -3,6 +3,7 @@
 void MouseObject::initialize(){
     sprite = Sprite(sf::Vector2f(-70.0,-28.75), 0.25);
     sprite.setTexture("assets/Mouse.png");
+    setPosition(position);
 }
 
 sf::Vector2f MouseObject::getDirection(Input* input){
@@ -31,15 +32,27 @@ sf::Vector2f MouseObject::getDirection(Input* input){
     return direction;
 }
 
-void MouseObject::update(World* world, Input* input, double delta){
-    sf::Vector2f direction = getDirection(input);
-    double speedFactor = (double)SPEED * delta;
-    sf::Vector2f velocity(direction.x * (float)speedFactor, direction.y * (float)speedFactor);
-    position += velocity;
-
+void MouseObject::setPosition(sf::Vector2f _position){
+    position = _position;
     enemyCollision.setPosition(position);
     shelterCollision.setPosition(position);
     cursorCollision.setPosition(position);
+}
+
+void MouseObject::update(World* world, Input* input, double delta){
+    sf::Vector2f cursorPosition = input->getMousePosition();
+    bool mouseClicked = input->getMouseClicked();
+    if(mouseClicked && cursorCollision.pointColliding(cursorPosition)){
+        isClicked.notify(*this);
+        controllable = true;
+    }
+    if(!controllable){
+        return;
+    }
+    sf::Vector2f direction = getDirection(input);
+    double speedFactor = (double)SPEED * delta;
+    sf::Vector2f velocity(direction.x * (float)speedFactor, direction.y * (float)speedFactor);
+    setPosition(position + velocity);
 }
 
 

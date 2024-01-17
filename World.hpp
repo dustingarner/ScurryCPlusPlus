@@ -47,9 +47,12 @@ class GameInitializer : public WorldInitializer{
     public:
     virtual ~GameInitializer();
     virtual void initialize(World* world);
+    void uncontrolMice();
 
     private:
     EnemySpawnObserver* spawnObserver;
+    Observer* mouseClickObserver;
+    vector<MouseObject*> mice;
     //Another observer to add enemies and players
     //Another observer to delete enemies and players?
 };
@@ -70,6 +73,16 @@ class EnemySpawnObserver : public Observer{
     World* world;
 };
 
+class MouseClickObserver : public Observer{
+    public:
+    MouseClickObserver(GameInitializer* _gameInitializer) : gameInitializer(_gameInitializer) {}
+    virtual ~MouseClickObserver() {}
+    virtual void execute(GameObject& object) {gameInitializer->uncontrolMice();}
+
+    private:
+    GameInitializer* gameInitializer;
+};
+
 
 class World{
     public:
@@ -84,6 +97,8 @@ class World{
     void clearObjects();
     void attemptSceneChange();
     void setNewScene(sceneType _newScene) {newScene = _newScene;}
+    void resetScore() {currentScore = 0;}
+    void incrementScore() {currentScore++;}
 
     private:
     vector<Observer*> observers;
@@ -91,6 +106,7 @@ class World{
     vector<int> deleteQueue;
     WorldInitializer* worldInitializer;
     sceneType newScene = NONE;
+    short int currentScore = 0;
 };
 
 

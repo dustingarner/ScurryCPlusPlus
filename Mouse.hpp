@@ -13,10 +13,15 @@ class MouseObject : public GameObject{
     virtual void update(World* world, Input* input, double delta);
     virtual void draw(sf::RenderWindow* window);
     void setControllable(bool toggle) {controllable = toggle;}
+    void setPosition(sf::Vector2f _position);
+    void makeCaptured() {captured = true;}
+    void addClickObserver(Observer* observer) {isClicked.addObserver(observer);}
 
     private:
     bool controllable = false;
+    bool captured = false;
     const int SPEED = 300.0;
+    Subject isClicked = Subject();
     CollisionBox enemyCollision = CollisionBox(sf::Vector2f(50.0, 25.0), sf::Vector2f(0.0,0.0));
     CollisionBox shelterCollision = CollisionBox(sf::Vector2f(75.0, 36.0), sf::Vector2f(-22.3, -9.85));
     CollisionBox cursorCollision = CollisionBox(sf::Vector2f(131.25, 75.0), sf::Vector2f(-70.0, -28.75));
