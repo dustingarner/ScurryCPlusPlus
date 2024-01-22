@@ -26,7 +26,9 @@ class GameObject{
     virtual void initialize() = 0;
     virtual void update(World* world, Input* input, double delta) = 0;
     virtual void draw(sf::RenderWindow* window) {sprite.draw(window, position);}
+    virtual bool getInfo() {return false;}
     bool getQueueDelete() {return queueDelete;}
+    void queueForDelete() {queueDelete = true;}
 
     protected:
     sf::Vector2f position;

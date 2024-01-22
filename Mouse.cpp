@@ -39,7 +39,24 @@ void MouseObject::setPosition(sf::Vector2f _position){
     cursorCollision.setPosition(position);
 }
 
+void MouseObject::incrementPosition(sf::Vector2f velocity){
+    position+=velocity;
+    enemyCollision.setPosition(position);
+    shelterCollision.setPosition(position);
+    cursorCollision.setPosition(position);
+}
+
+void MouseObject::makeCaptured(){
+    captured = true;
+    enemyCollision.setColliding(false);
+    shelterCollision.setColliding(false);
+    cursorCollision.setColliding(false);
+}
+
 void MouseObject::update(World* world, Input* input, double delta){
+    if(captured){
+        return;
+    }
     sf::Vector2f cursorPosition = input->getMousePosition();
     bool mouseClicked = input->getMouseClicked();
     if(mouseClicked && cursorCollision.pointColliding(cursorPosition)){
@@ -56,8 +73,7 @@ void MouseObject::update(World* world, Input* input, double delta){
 }
 
 
-
- void MouseObject::draw(sf::RenderWindow* window){
+void MouseObject::draw(sf::RenderWindow* window){
     sprite.draw(window, position);
     //enemyCollision.draw(window);
     //shelterCollision.draw(window);

@@ -3,34 +3,71 @@
 GameInitializer::~GameInitializer(){
     delete spawnObserver;
     delete mouseClickObserver;
+    delete mouseRemoveObserver;
     //delete other things
 }
 
 void GameInitializer::initialize(World* world){
     world->resetScore();
-    spawnObserver = new EnemySpawnObserver(world);
     mouseClickObserver = new MouseClickObserver(this);
-    EnemySpawnerObject* spawner = new EnemySpawnerObject;
+    mouseRemoveObserver = new MouseRemoveObserver(this);
+    allMice.push_back(makeMouse(sf::Vector2f(100.0f, 500.0f), true));
+    allMice.push_back(makeMouse(sf::Vector2f(200.0f, 500.0f), false));
+    allMice.push_back(makeMouse(sf::Vector2f(100.0f, 400.0f), false));
+    allMice.push_back(makeMouse(sf::Vector2f(200.0f, 400.0f), false));
+    for(int i = 0; i < allMice.size(); i++){
+        allMice[i]->addClickObserver(mouseClickObserver);
+        world->addObject(allMice[i]);
+    }
+    spawnObserver = new EnemySpawnObserver(world, allMice, mouseRemoveObserver);
+    EnemySpawnerObject* spawner = new EnemySpawnerObject();
     spawner->connectObserver(spawnObserver);
     world->addObject(spawner);
-    mice.push_back(makeMouse(sf::Vector2f(100.0f, 500.0f), true));
-    mice.push_back(makeMouse(sf::Vector2f(200.0f, 500.0f), false));
-    mice.push_back(makeMouse(sf::Vector2f(100.0f, 400.0f), false));
-    mice.push_back(makeMouse(sf::Vector2f(200.0f, 400.0f), false));
-    for(int i = 0; i < mice.size(); i++){
-        mice[i]->addClickObserver(mouseClickObserver);
-        world->addObject(mice[i]);
-    }
+    
+    Shelter* shelter = new Shelter(allMice); //Make this into a function?
+    shelter->initialize();
+    shelter->addRemoveObserver(mouseRemoveObserver);
+    world->addObject(shelter);
 }
 
 void GameInitializer::uncontrolMice(){
-    for(int i = 0; i < mice.size(); i++){
-        mice[i]->setControllable(false);
+    for(int i = 0; i < allMice.size(); i++){
+        allMice[i]->setControllable(false);
     }
 }
 
+void GameInitializer::removeMouse(GameObject& mouse){
+    for(int i = 0; i < allMice.size(); i++){
+        if(&mouse == allMice[i]){
+            allMice.erase(allMice.begin()+i);
+            break;
+        }
+    }
+    if(!mouse.getInfo()){
+        score++;
+    }
+    if(allMice.size() == 0){
+        endGame();
+    }
+}
+
+#include <iostream>
+void GameInitializer::endGame(){
+    switch(score){
+        case 0:
+            break;
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+    }
+    std::cout<<score;
+}
+
 void EnemySpawnObserver::execute(GameObject& object){
-    EnemyObject* newEnemy = spawnEnemy();
+    EnemyObject* newEnemy = spawnEnemy(allMice, mouseRemoveObserver);
     //Connect EnemyObject to erasing itself in time
     world->addObject(newEnemy);
 }

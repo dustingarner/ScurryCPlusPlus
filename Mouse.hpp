@@ -12,9 +12,14 @@ class MouseObject : public GameObject{
     sf::Vector2f getDirection(Input* input);
     virtual void update(World* world, Input* input, double delta);
     virtual void draw(sf::RenderWindow* window);
+    virtual bool getInfo() {return getCaptured();}
     void setControllable(bool toggle) {controllable = toggle;}
     void setPosition(sf::Vector2f _position);
-    void makeCaptured() {captured = true;}
+    void incrementPosition(sf::Vector2f velocity);
+    bool collidesWithEnemy(CollisionBox& testCollision) {return enemyCollision.rectColliding(testCollision);}
+    bool collidesWithShelter(CollisionBox& testCollision) {return shelterCollision.rectColliding(testCollision);}
+    void makeCaptured();
+    bool getCaptured() {return captured;}
     void addClickObserver(Observer* observer) {isClicked.addObserver(observer);}
 
     private:

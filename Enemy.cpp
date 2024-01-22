@@ -1,5 +1,6 @@
 #include "Enemy.hpp"
 
+
 void EnemyObject::initialize(){
     int type = rand() % 2;
     string filePath;
@@ -32,9 +33,59 @@ void EnemyObject::initialize(){
         case 1:
             direction = sf::Vector2f(1.0f,1.0f);
             position.x = (rand()%650);
-            position.y = 0;
+            position.y = -150;
+    }
+    speed = (rand() % 10) + 70;
+}
+
+void EnemyObject::attemptDeletion(){
+    if(direction.x > 0 && position.y < 600){
+        return;
+    }
+    if(direction.x < 0 && position.y > -150){
+        return;
+    }
+    for(int i = 0; i < capturedMice.size(); i++){
+        removeMouseSubject.notify(*capturedMice[i]);
+        capturedMice[i]->queueForDelete();
+    }
+    queueForDelete();
+}
+
+
+void EnemyObject::attemptCapture(){
+    for(int i = 0; i < allMice.size(); i++){
+        if(allMice[i] == nullptr){
+            continue;
+        }
+        if(allMice[i]->collidesWithEnemy(collision)){
+            allMice[i]->makeCaptured();
+            capturedMice.push_back(allMice[i]);
+        }
     }
 }
+
+void EnemyObject::update(World* world, Input* input, double delta){
+    double speedFactor = (double)speed * delta;
+    sf::Vector2f velocity(direction.x * (float)speedFactor, direction.y * (float)speedFactor);
+    position += velocity;
+    collision.setPosition(position);
+    attemptCapture();
+    for(int i = 0; i < capturedMice.size(); i++){
+        capturedMice[i]->incrementPosition(velocity);
+    }
+    attemptDeletion();
+}
+
+void EnemyObject::captureMouse(MouseObject* mouse){
+    mouse->makeCaptured();
+    capturedMice.push_back(mouse);
+}
+
+
+
+
+
 
 void EnemySpawnerObject::update(World* world, Input* input, double delta){
     if(totalWaitTime >= maxWaitTime){
@@ -45,8 +96,9 @@ void EnemySpawnerObject::update(World* world, Input* input, double delta){
     totalWaitTime += SPAWN_SPEED * delta;
 }
 
-EnemyObject* spawnEnemy(){
-    EnemyObject* newEnemy = new EnemyObject;
+EnemyObject* spawnEnemy(const vector<MouseObject*>& allMice, Observer* mouseRemoveObserver){
+    EnemyObject* newEnemy = new EnemyObject(allMice);
     newEnemy->initialize();
+    newEnemy->addRemoveObserver(mouseRemoveObserver);
     return newEnemy;
 }

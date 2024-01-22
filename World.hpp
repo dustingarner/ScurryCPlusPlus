@@ -8,6 +8,7 @@
 #include "Menu.hpp"
 #include "Mouse.hpp"
 #include "Enemy.hpp"
+#include "Shelter.hpp"
 
 using std::vector;
 
@@ -48,12 +49,15 @@ class GameInitializer : public WorldInitializer{
     virtual ~GameInitializer();
     virtual void initialize(World* world);
     void uncontrolMice();
+    void removeMouse(GameObject& mouse);
+    void endGame();
 
     private:
     EnemySpawnObserver* spawnObserver;
     Observer* mouseClickObserver;
-    vector<MouseObject*> mice;
-    //Another observer to add enemies and players
+    vector<MouseObject*> allMice;
+    Observer* mouseRemoveObserver;
+    int score = 0;
     //Another observer to delete enemies and players?
 };
 
@@ -65,12 +69,15 @@ class TestInitializer : public WorldInitializer{
 
 class EnemySpawnObserver : public Observer{
     public:
-    EnemySpawnObserver(World* _world) : world(_world) {}
+    EnemySpawnObserver(World* _world, const vector<MouseObject*>& _allMice, Observer* _mouseRemoveObserver) 
+            : world(_world), allMice(_allMice), mouseRemoveObserver(_mouseRemoveObserver) {}
     virtual ~EnemySpawnObserver() {}
     virtual void execute(GameObject& object);
 
     private:
     World* world;
+    const vector<MouseObject*>& allMice;
+    Observer* mouseRemoveObserver;
 };
 
 class MouseClickObserver : public Observer{
@@ -78,6 +85,16 @@ class MouseClickObserver : public Observer{
     MouseClickObserver(GameInitializer* _gameInitializer) : gameInitializer(_gameInitializer) {}
     virtual ~MouseClickObserver() {}
     virtual void execute(GameObject& object) {gameInitializer->uncontrolMice();}
+
+    private:
+    GameInitializer* gameInitializer;
+};
+
+class MouseRemoveObserver : public Observer{
+    public:
+    MouseRemoveObserver(GameInitializer* _gameInitializer) : gameInitializer(_gameInitializer) {}
+    virtual ~MouseRemoveObserver() {}
+    virtual void execute(GameObject& object) {gameInitializer->removeMouse(object);}
 
     private:
     GameInitializer* gameInitializer;
