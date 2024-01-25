@@ -4,11 +4,13 @@ GameInitializer::~GameInitializer(){
     delete spawnObserver;
     delete mouseClickObserver;
     delete mouseRemoveObserver;
+    delete gameEndObserver;
     //delete other things
 }
 
 void GameInitializer::initialize(World* world){
-    world->resetScore();
+    gameEndObserver = new GameEndObserver(this, world);
+    world->setScore(0);
     mouseClickObserver = new MouseClickObserver(this);
     mouseRemoveObserver = new MouseRemoveObserver(this);
     allMice.push_back(makeMouse(sf::Vector2f(100.0f, 500.0f), true));
@@ -20,7 +22,7 @@ void GameInitializer::initialize(World* world){
         world->addObject(allMice[i]);
     }
     spawnObserver = new EnemySpawnObserver(world, allMice, mouseRemoveObserver);
-    EnemySpawnerObject* spawner = new EnemySpawnerObject();
+    spawner = new EnemySpawnerObject();
     spawner->connectObserver(spawnObserver);
     world->addObject(spawner);
     
@@ -51,7 +53,6 @@ void GameInitializer::removeMouse(GameObject& mouse){
     }
 }
 
-#include <iostream>
 void GameInitializer::endGame(){
     switch(score){
         case 0:
@@ -63,13 +64,63 @@ void GameInitializer::endGame(){
         case 3:
             break;
     }
-    std::cout<<score;
+    gameEndObserver->execute(*spawner);
 }
 
 void EnemySpawnObserver::execute(GameObject& object){
     EnemyObject* newEnemy = spawnEnemy(allMice, mouseRemoveObserver);
     //Connect EnemyObject to erasing itself in time
     world->addObject(newEnemy);
+}
+
+void GameEndObserver::execute(GameObject& object){
+    int score = gameInitializer->getScore();
+    world->setScore(score);
+    world->setNewScene(GAMEOVER);
+}
+
+void GameOverInitializer::initialize(World* world){
+    if(score == 4){
+        SpriteObject* congratsSprite = new SpriteObject(
+            sf::Vector2f(90.0,200.0), "assets/Menu/Congratulations.png", 
+            sf::Vector2f(0.0,0.0), 0.6
+        );
+        congratsSprite->initialize();
+        world->addObject(congratsSprite);
+    }
+    else{
+        SpriteObject* casualtiesTextSprite = new SpriteObject(
+            sf::Vector2f(150.0,125.0), "assets/Menu/Casualties.png",
+            sf::Vector2f(0.0,0.0), 0.5
+        );
+        casualtiesTextSprite->initialize();
+        world->addObject(casualtiesTextSprite);
+        SpriteObject* scoreTextSprite = new SpriteObject(
+            sf::Vector2f(150.0,325.0), "assets/Menu/Safe.png",
+            sf::Vector2f(0.0,0.0), 0.5
+        );
+        scoreTextSprite->initialize();
+        world->addObject(scoreTextSprite);
+        string casualtyCountPath = "assets/Menu/Counter/";
+        casualtyCountPath += (4-score)+48;
+        casualtyCountPath += ".png";
+        SpriteObject* casualtyCountSprite = new SpriteObject(
+            sf::Vector2f(450.0,125.0), casualtyCountPath,
+            sf::Vector2f(0.0,0.0), 0.5
+        );
+        casualtyCountSprite->initialize();
+        world->addObject(casualtyCountSprite);
+        string scoreCountPath = "assets/Menu/Counter/";
+        scoreCountPath += score+48;
+        scoreCountPath += ".png";
+        SpriteObject* scoreCountSprite = new SpriteObject(
+            sf::Vector2f(450.0,325.0), scoreCountPath,
+            sf::Vector2f(0.0,0.0), 0.5
+        );
+        scoreCountSprite->initialize();
+        world->addObject(scoreCountSprite);
+    }
+    //Add timer object
 }
 
 
@@ -107,6 +158,7 @@ void World::attemptSceneChange(){
             changeScene(new GameInitializer);
             break;
         case GAMEOVER:
+            changeScene(new GameOverInitializer(currentScore));
             break;
     }
     newScene = NONE;
@@ -115,6 +167,8 @@ void World::attemptSceneChange(){
 void World::update(Input* input, double delta){
     for(int i = 0; i < objects.size(); i++){
         objects[i]->update(this, input, delta);
+    }
+    for(int i = 0; i < objects.size(); i++){
         if(objects[i]->getQueueDelete()){
             deleteQueue.push_back(i);
         }

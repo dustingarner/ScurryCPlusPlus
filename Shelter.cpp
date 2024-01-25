@@ -10,11 +10,10 @@ void Shelter::initialize(){
 void Shelter::update(World* world, Input* input, double delta){
     for(int i = 0; i < allMice.size(); i++){
         if(allMice[i]->collidesWithShelter(collision)){
-            removeMouseSubject.notify(*allMice[i]);
             allMice[i]->queueForDelete();
+            score++;
+            removeMouseSubject.notify(*allMice[i]);
         }
     }
-
-    //First check allMice to see if any overlap
-    //Next notify GameInitializer if so
 }
+

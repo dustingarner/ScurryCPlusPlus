@@ -50,15 +50,17 @@ class GameInitializer : public WorldInitializer{
     virtual void initialize(World* world);
     void uncontrolMice();
     void removeMouse(GameObject& mouse);
+    int getScore() {return score;}
     void endGame();
 
     private:
+    EnemySpawnerObject* spawner;
     EnemySpawnObserver* spawnObserver;
     Observer* mouseClickObserver;
     vector<MouseObject*> allMice;
     Observer* mouseRemoveObserver;
+    Observer* gameEndObserver;
     int score = 0;
-    //Another observer to delete enemies and players?
 };
 
 class TestInitializer : public WorldInitializer{
@@ -100,6 +102,28 @@ class MouseRemoveObserver : public Observer{
     GameInitializer* gameInitializer;
 };
 
+class GameEndObserver : public Observer{
+    public:
+    GameEndObserver(GameInitializer* _gameInitializer, World* _world) : 
+            gameInitializer(_gameInitializer), world(_world) {}
+    virtual ~GameEndObserver() {}
+    virtual void execute(GameObject& object);
+
+    private:
+    GameInitializer* gameInitializer;
+    World* world;
+};
+
+class GameOverInitializer : public WorldInitializer{
+    public:
+    GameOverInitializer(int _score) : score(_score) {}
+    virtual ~GameOverInitializer() {}
+    virtual void initialize(World* world);
+
+    private:
+    int score;
+};
+
 
 class World{
     public:
@@ -114,8 +138,7 @@ class World{
     void clearObjects();
     void attemptSceneChange();
     void setNewScene(sceneType _newScene) {newScene = _newScene;}
-    void resetScore() {currentScore = 0;}
-    void incrementScore() {currentScore++;}
+    void setScore(int score) {currentScore = score;}
 
     private:
     vector<Observer*> observers;

@@ -39,7 +39,18 @@ class GameObject{
     int zIndex;
 };
 
+class SpriteObject : public GameObject{
+    public:
+    SpriteObject(sf::Vector2f _position, string _textureFilePath, sf::Vector2f _offset, double _scale);
+    virtual ~SpriteObject() {}
+    virtual void initialize();
+    virtual void update(World* world, Input* input, double delta) {}
 
+    private:
+    string textureFilePath;
+    sf::Vector2f offset;
+    double scale;
+};
 
 
 
