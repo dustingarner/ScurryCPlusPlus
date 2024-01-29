@@ -13,6 +13,12 @@ void changeScene(World* world, WorldInitializer* initializer){
 int main(){
     sf::RenderWindow window(sf::VideoMode(800, 600), "My Window");
 
+    SpriteObject background = SpriteObject(
+        sf::Vector2f(0.0,0.0), "assets/Background.png",
+        sf::Vector2f(0.0,0.0), 1.0
+    );
+    background.initialize();
+
     //World* world = new World(new TestInitializer());
     World* world = new World(new MainMenuInitializer());
     world->initialize();
@@ -35,6 +41,10 @@ int main(){
         currentInput = new Input(prevClicked);
 
         currentInput->initialize(&window);
+
+        window.clear();
+        background.draw(&window);
+        //window.display();
 
         world->update(currentInput, delta.count());
         world->draw(&window); //Maybe change accumulation and whatnot, pass in vector interpolation

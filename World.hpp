@@ -9,6 +9,8 @@
 #include "Mouse.hpp"
 #include "Enemy.hpp"
 #include "Shelter.hpp"
+#include "Timer.hpp"
+#include "Audio.hpp"
 
 using std::vector;
 
@@ -117,17 +119,18 @@ class GameEndObserver : public Observer{
 class GameOverInitializer : public WorldInitializer{
     public:
     GameOverInitializer(int _score) : score(_score) {}
-    virtual ~GameOverInitializer() {}
+    virtual ~GameOverInitializer() {delete toMainObserver;}
     virtual void initialize(World* world);
 
     private:
     int score;
+    Observer* toMainObserver;
 };
 
 
 class World{
     public:
-    World(WorldInitializer* _worldInitializer) : worldInitializer(_worldInitializer) {}
+    World(WorldInitializer* _worldInitializer) : worldInitializer(_worldInitializer) {soundPlayer = new SoundPlayer;}
     ~World();
     void initialize() {worldInitializer->initialize(this);}
     void addObject(GameObject* gameObject) {objects.push_back(gameObject);}
@@ -139,8 +142,10 @@ class World{
     void attemptSceneChange();
     void setNewScene(sceneType _newScene) {newScene = _newScene;}
     void setScore(int score) {currentScore = score;}
+    SoundPlayer* getSoundPlayer() {return soundPlayer;}
 
     private:
+    SoundPlayer* soundPlayer;
     vector<Observer*> observers;
     vector<GameObject*> objects;
     vector<int> deleteQueue;

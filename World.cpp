@@ -24,11 +24,16 @@ void GameInitializer::initialize(World* world){
     spawnObserver = new EnemySpawnObserver(world, allMice, mouseRemoveObserver);
     spawner = new EnemySpawnerObject();
     spawner->connectObserver(spawnObserver);
+    spawner->initialize();
     world->addObject(spawner);
+    TimerObject* spawnStartTimer = new TimerObject(0.1);
+    spawnStartTimer->addObserver(spawner->getTurnOnObserver());
+    world->addObject(spawnStartTimer);
     
     Shelter* shelter = new Shelter(allMice); //Make this into a function?
     shelter->initialize();
     shelter->addRemoveObserver(mouseRemoveObserver);
+    shelter->addRemoveObserver(world->getSoundPlayer()->getSafeObserver());
     world->addObject(shelter);
 }
 
@@ -69,7 +74,7 @@ void GameInitializer::endGame(){
 
 void EnemySpawnObserver::execute(GameObject& object){
     EnemyObject* newEnemy = spawnEnemy(allMice, mouseRemoveObserver);
-    //Connect EnemyObject to erasing itself in time
+    newEnemy->addRemoveObserver(world->getSoundPlayer()->getCaptureObserver());
     world->addObject(newEnemy);
 }
 
@@ -120,12 +125,16 @@ void GameOverInitializer::initialize(World* world){
         scoreCountSprite->initialize();
         world->addObject(scoreCountSprite);
     }
-    //Add timer object
+    toMainObserver = new ToMainObserver(world);
+    TimerObject* timer = new TimerObject(2);
+    timer->addObserver(toMainObserver);
+    world->addObject(timer);
 }
 
 
 World::~World(){
     clearObjects();
+    delete soundPlayer;
 }
 
 void World::clearObjects(){
@@ -182,7 +191,6 @@ void World::update(Input* input, double delta){
 }
 
 void World::draw(sf::RenderWindow* window){
-    window->clear();
     //Sort objects here
     for(int i = 0; i < objects.size(); i++){
         objects[i]->draw(window);
@@ -203,6 +211,13 @@ MainMenuInitializer::~MainMenuInitializer(){
 
 void MainMenuInitializer::initialize(World* world){
     quitObserver = new QuitObserver(world);
+
+    SpriteObject* title = new SpriteObject(
+            sf::Vector2f(140.0,40.0), "assets/Menu/Title.png",
+            sf::Vector2f(0.0,0.0), 1
+        );
+    title->initialize();
+    world->addObject(title);
 
     Button* startButton = new Button(sf::Vector2f(316.5, 325.0));
     startGameObserver = new StartGameObserver(world);
@@ -231,6 +246,13 @@ void InfoInitializer::initialize(World* world){
     backButton->setOutsideSprite("assets/Menu/Back.png");
     backButton->setInsideSprite("assets/Menu/Safe.png");
     world->addObject(backButton);
+
+    SpriteObject* infoText = new SpriteObject(
+            sf::Vector2f(65.0,25.0), "assets/Menu/InfoText.png",
+            sf::Vector2f(0.0,0.0), 0.5
+        );
+    infoText->initialize();
+    world->addObject(infoText);
 }
 
 

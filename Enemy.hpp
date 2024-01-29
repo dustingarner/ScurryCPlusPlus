@@ -28,22 +28,40 @@ class EnemyObject : public GameObject{
     Subject removeMouseSubject = Subject();
 };
 
+
+
 class EnemySpawnerObject : public GameObject{
     public:
     EnemySpawnerObject() {}
     ~EnemySpawnerObject() {}
-    virtual void initialize() {randomizeMaxWaitTime();}
+    virtual void initialize();
     virtual void update(World* world, Input* input, double delta);
     virtual void draw(sf::RenderWindow* window) {}
     void randomizeMaxWaitTime() {maxWaitTime = 200.0 + (double)(rand() % 100);}
     void connectObserver(Observer* observer) {spawnSubject.addObserver(observer);}
+    void turnOn() {isOn = true;}
+    Observer* getTurnOnObserver() {return turnOnObserver;}
     
     private:
-    const double SPAWN_SPEED = 200.0;
+    bool isOn = false;
+    const double SPAWN_SPEED = 100.0;
     double totalWaitTime = 0.0;
     double maxWaitTime;
+    Observer* turnOnObserver;
     Subject spawnSubject = Subject();
 };
+
+class SpawnOnObserver : public Observer{
+    public:
+    SpawnOnObserver(EnemySpawnerObject* _spawner) : spawner(_spawner) {}
+    virtual ~SpawnOnObserver() {}
+    virtual void execute(GameObject& object) {spawner->turnOn();}
+
+    private:
+    EnemySpawnerObject* spawner;
+};
+
+
 
 EnemyObject* spawnEnemy(const vector<MouseObject*>& allMice, Observer* mouseRemoveObserver);
 

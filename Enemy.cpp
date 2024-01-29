@@ -39,10 +39,10 @@ void EnemyObject::initialize(){
 }
 
 void EnemyObject::attemptDeletion(){
-    if(direction.x > 0 && position.y < 600){
+    if(direction.x > 0 && position.y < 600 && position.x < 900){
         return;
     }
-    if(direction.x < 0 && position.y > -150){
+    if(direction.x < 0 && position.y > -150 && position.x > -225){
         return;
     }
     for(int i = 0; i < capturedMice.size(); i++){
@@ -83,11 +83,15 @@ void EnemyObject::captureMouse(MouseObject* mouse){
 }
 
 
-
-
-
+void EnemySpawnerObject::initialize(){
+    randomizeMaxWaitTime();
+    turnOnObserver = new SpawnOnObserver(this);
+}
 
 void EnemySpawnerObject::update(World* world, Input* input, double delta){
+    if(!isOn){
+        return;
+    }
     if(totalWaitTime >= maxWaitTime){
         spawnSubject.notify(*this);
         totalWaitTime -= maxWaitTime;
