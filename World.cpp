@@ -74,7 +74,7 @@ void GameInitializer::endGame(){
 
 void EnemySpawnObserver::execute(GameObject& object){
     EnemyObject* newEnemy = spawnEnemy(allMice, mouseRemoveObserver);
-    newEnemy->addRemoveObserver(world->getSoundPlayer()->getCaptureObserver());
+    newEnemy->addCaptureObserver(world->getSoundPlayer()->getCaptureObserver());
     world->addObject(newEnemy);
 }
 
@@ -85,6 +85,7 @@ void GameEndObserver::execute(GameObject& object){
 }
 
 void GameOverInitializer::initialize(World* world){
+    TimerObject* timer;
     if(score == 4){
         SpriteObject* congratsSprite = new SpriteObject(
             sf::Vector2f(90.0,200.0), "assets/Menu/Congratulations.png", 
@@ -92,6 +93,8 @@ void GameOverInitializer::initialize(World* world){
         );
         congratsSprite->initialize();
         world->addObject(congratsSprite);
+        world->notifyPerfectEnd(*congratsSprite);
+        timer = new TimerObject(5);
     }
     else{
         SpriteObject* casualtiesTextSprite = new SpriteObject(
@@ -124,17 +127,28 @@ void GameOverInitializer::initialize(World* world){
         );
         scoreCountSprite->initialize();
         world->addObject(scoreCountSprite);
+        world->notifyEnd(*scoreCountSprite);
+        timer = new TimerObject(3);
     }
     toMainObserver = new ToMainObserver(world);
-    TimerObject* timer = new TimerObject(2);
+    
     timer->addObserver(toMainObserver);
     world->addObject(timer);
 }
 
 
+World::World(WorldInitializer* _worldInitializer) : worldInitializer(_worldInitializer){
+    soundPlayer = new SoundPlayer;
+    musicPlayer = new MusicPlayer;
+    startingGame.addObserver(musicPlayer->getSongObserver());
+    endingGame.addObserver(musicPlayer->getEndObserver());
+    endingPerfectGame.addObserver(musicPlayer->getCongratsObserver());
+}
+
 World::~World(){
     clearObjects();
     delete soundPlayer;
+    delete musicPlayer;
 }
 
 void World::clearObjects(){
@@ -222,17 +236,21 @@ void MainMenuInitializer::initialize(World* world){
     Button* startButton = new Button(sf::Vector2f(316.5, 325.0));
     startGameObserver = new StartGameObserver(world);
     startButton->addObserver(startGameObserver);
+    startButton->addObserver(world->getSoundPlayer()->getMenuClickObserver());
     startButton->setOutsideSprite("assets/Menu/Play.png");
     startButton->setInsideSprite("assets/Menu/Safe.png");
 
     Button* infoButton = new Button(sf::Vector2f(316.5, 450.0));
     openInfoObserver = new OpenInfoObserver(world);
     infoButton->addObserver(openInfoObserver);
+    infoButton->addObserver(world->getSoundPlayer()->getMenuClickObserver());
     infoButton->setOutsideSprite("assets/Menu/Info.png");
     infoButton->setInsideSprite("assets/Menu/Safe.png");
 
     world->addObject(startButton);
     world->addObject(infoButton);
+
+    world->notifyStart(*title);
 }
 
 InfoInitializer::~InfoInitializer(){
@@ -243,6 +261,7 @@ void InfoInitializer::initialize(World* world){
     Button* backButton = new Button(sf::Vector2f(50.0, 475.0));
     toMainObserver = new ToMainObserver(world);
     backButton->addObserver(toMainObserver);
+    backButton->addObserver(world->getSoundPlayer()->getMenuClickObserver());
     backButton->setOutsideSprite("assets/Menu/Back.png");
     backButton->setInsideSprite("assets/Menu/Safe.png");
     world->addObject(backButton);

@@ -130,7 +130,7 @@ class GameOverInitializer : public WorldInitializer{
 
 class World{
     public:
-    World(WorldInitializer* _worldInitializer) : worldInitializer(_worldInitializer) {soundPlayer = new SoundPlayer;}
+    World(WorldInitializer* _worldInitializer);
     ~World();
     void initialize() {worldInitializer->initialize(this);}
     void addObject(GameObject* gameObject) {objects.push_back(gameObject);}
@@ -143,15 +143,22 @@ class World{
     void setNewScene(sceneType _newScene) {newScene = _newScene;}
     void setScore(int score) {currentScore = score;}
     SoundPlayer* getSoundPlayer() {return soundPlayer;}
+    void notifyStart(GameObject& object) {startingGame.notify(object);}
+    void notifyEnd(GameObject& object) {endingGame.notify(object);}
+    void notifyPerfectEnd(GameObject& object) {endingPerfectGame.notify(object);}
 
     private:
     SoundPlayer* soundPlayer;
+    MusicPlayer* musicPlayer;
     vector<Observer*> observers;
     vector<GameObject*> objects;
     vector<int> deleteQueue;
     WorldInitializer* worldInitializer;
     sceneType newScene = NONE;
     short int currentScore = 0;
+    Subject startingGame = Subject();
+    Subject endingGame = Subject();
+    Subject endingPerfectGame = Subject();
 };
 
 
