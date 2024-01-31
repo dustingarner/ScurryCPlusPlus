@@ -17,6 +17,7 @@ class EnemyObject : public GameObject{
     void captureMouse(MouseObject* mouse);
     void attemptDeletion();
     void attemptCapture();
+    void addCaptureObserver(Observer* observer) {captureMouseSubject.addObserver(observer);}
     void addRemoveObserver(Observer* observer) {removeMouseSubject.addObserver(observer);}
 
     private:
@@ -25,6 +26,7 @@ class EnemyObject : public GameObject{
     sf::Vector2f direction;
     vector<MouseObject*> capturedMice;
     const vector<MouseObject*>& allMice;
+    Subject captureMouseSubject = Subject();
     Subject removeMouseSubject = Subject();
 };
 

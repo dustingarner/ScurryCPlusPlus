@@ -35,7 +35,7 @@ void EnemyObject::initialize(){
             position.x = (rand()%650);
             position.y = -150;
     }
-    speed = (rand() % 10) + 70;
+    speed = (rand() % 50) + 200;
 }
 
 void EnemyObject::attemptDeletion(){
@@ -61,6 +61,7 @@ void EnemyObject::attemptCapture(){
         if(allMice[i]->collidesWithEnemy(collision)){
             allMice[i]->makeCaptured();
             capturedMice.push_back(allMice[i]);
+            captureMouseSubject.notify(*allMice[i]);
         }
     }
 }
