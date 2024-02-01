@@ -238,14 +238,14 @@ void MainMenuInitializer::initialize(World* world){
     startButton->addObserver(startGameObserver);
     startButton->addObserver(world->getSoundPlayer()->getMenuClickObserver());
     startButton->setOutsideSprite("assets/Menu/Play.png");
-    startButton->setInsideSprite("assets/Menu/Safe.png");
+    startButton->setInsideSprite("assets/Menu/PlayFilled.png");
 
     Button* infoButton = new Button(sf::Vector2f(316.5, 450.0));
     openInfoObserver = new OpenInfoObserver(world);
     infoButton->addObserver(openInfoObserver);
     infoButton->addObserver(world->getSoundPlayer()->getMenuClickObserver());
     infoButton->setOutsideSprite("assets/Menu/Info.png");
-    infoButton->setInsideSprite("assets/Menu/Safe.png");
+    infoButton->setInsideSprite("assets/Menu/InfoFilled.png");
 
     world->addObject(startButton);
     world->addObject(infoButton);
@@ -263,11 +263,11 @@ void InfoInitializer::initialize(World* world){
     backButton->addObserver(toMainObserver);
     backButton->addObserver(world->getSoundPlayer()->getMenuClickObserver());
     backButton->setOutsideSprite("assets/Menu/Back.png");
-    backButton->setInsideSprite("assets/Menu/Safe.png");
+    backButton->setInsideSprite("assets/Menu/BackFilled.png");
     world->addObject(backButton);
 
     SpriteObject* infoText = new SpriteObject(
-            sf::Vector2f(65.0,25.0), "assets/Menu/InfoText.png",
+            sf::Vector2f(65.0,40.0), "assets/Menu/InfoText.png",
             sf::Vector2f(0.0,0.0), 0.5
         );
     infoText->initialize();

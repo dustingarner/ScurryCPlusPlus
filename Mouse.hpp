@@ -25,7 +25,7 @@ class MouseObject : public GameObject{
     private:
     bool controllable = false;
     bool captured = false;
-    const int SPEED = 100.0;
+    const int SPEED = 125.0;
     Subject isClicked = Subject();
     CollisionBox enemyCollision = CollisionBox(sf::Vector2f(50.0, 25.0), sf::Vector2f(0.0,0.0));
     CollisionBox shelterCollision = CollisionBox(sf::Vector2f(75.0, 36.0), sf::Vector2f(-22.3, -9.85));

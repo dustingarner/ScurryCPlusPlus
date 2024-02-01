@@ -11,7 +11,7 @@ class Shelter : public GameObject{
     Shelter(const vector<MouseObject*>& _allMice) : allMice(_allMice) {}
     virtual void initialize();
     virtual void update(World* world, Input* input, double delta);
-    virtual void draw(sf::RenderWindow* window) {sprite.draw(window, position); collision.draw(window);}
+    virtual void draw(sf::RenderWindow* window) {sprite.draw(window, position);}
     int getScore() {return score;}
     void addRemoveObserver(Observer* observer) {removeMouseSubject.addObserver(observer);}
 

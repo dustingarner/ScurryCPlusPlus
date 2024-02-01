@@ -56,5 +56,4 @@ class SpriteObject : public GameObject{
 
 
 
-
 #endif

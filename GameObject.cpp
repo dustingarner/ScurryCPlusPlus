@@ -10,3 +10,5 @@ void SpriteObject::initialize(){
     sprite = Sprite(offset, scale);
     sprite.setTexture(textureFilePath);
 }
+
+

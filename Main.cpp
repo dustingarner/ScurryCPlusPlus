@@ -1,6 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include "SFML/Graphics.hpp"
+#include "SFML/Audio.hpp"
 #include "Input.hpp"
 #include "World.hpp"
 
@@ -44,8 +45,6 @@ int main(){
 
         window.clear();
         background.draw(&window);
-        //window.display();
-
         world->update(currentInput, delta.count());
         world->draw(&window); //Maybe change accumulation and whatnot, pass in vector interpolation
         world->attemptSceneChange();

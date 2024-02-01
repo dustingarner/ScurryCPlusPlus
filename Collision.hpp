@@ -16,11 +16,15 @@ class CollisionBox{
     void setPosition(sf::Vector2f position) {box = sf::FloatRect(position + offset, size);}
     sf::FloatRect getBox() {return box;}
     void setVisible(bool toggle) {visible = toggle;}
-    bool pointColliding(sf::Vector2f point) {return box.contains(point);}
+    bool pointColliding(sf::Vector2f point) {if(!collides){return false;} return box.contains(point);}
+    bool rectColliding(CollisionBox& otherBox) 
+            {if(!collides){return false;} return box.intersects(otherBox.getBox());}
     void draw(sf::RenderWindow* window);
+    void setColliding(bool toggle) {collides = toggle;}
     
     private:
     bool visible = true;
+    bool collides = true;
     sf::FloatRect box;
     sf::Vector2f size;
     sf::Vector2f offset;

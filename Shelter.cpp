@@ -3,7 +3,7 @@
 void Shelter::initialize(){
     position = sf::Vector2f(650.0, -9.0);
     collision.setPosition(position);
-    sprite = Sprite(sf::Vector2f(0.0,0.0), 0.2);
+    sprite = Sprite(sf::Vector2f(0.0,9.0), 0.2);
     sprite.setTexture("assets/Shelter.png");
 }
 

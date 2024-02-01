@@ -27,12 +27,12 @@ void EnemyObject::initialize(){
     switch(location){
         case 0:
             direction = sf::Vector2f(-1.0f,-1.0f);
-            position.x = (rand()%650) + 150;
+            position.x = (rand()%650) + 300;
             position.y = 600;
             break;
         case 1:
             direction = sf::Vector2f(1.0f,1.0f);
-            position.x = (rand()%650);
+            position.x = (rand()%600);
             position.y = -150;
     }
     speed = (rand() % 50) + 200;
